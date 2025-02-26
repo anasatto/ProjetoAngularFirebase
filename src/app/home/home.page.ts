@@ -4,6 +4,7 @@ import { CrudService } from '../services/crud.service';
 import { Storage, getDownloadURL, ref, uploadBytesResumable } from '@angular/fire/storage';
 import { MessageService } from '../services/message.service';
 import { Router } from '@angular/router';
+import { error } from 'console';
 
 @Component({
   selector: 'app-home',
@@ -12,17 +13,26 @@ import { Router } from '@angular/router';
 })
 export class HomePage {
 
-  pokemon:any = {
-    nome: null,
-    poder: null
-  };
+  url: string = `https://restcountries.com/v3.1/all?fields=name,flags,borders`;
+  is_loading: boolean = false;
+  dados: any = {};
 
-  constructor(
-    public crudService: CrudService
-   ){ }
+  constructor(){ 
+    this.is_loading = true;
 
-  enviar() {
-    this.crudService.insert(this.pokemon, 'pokemons');
+    fetch(this.url)
+    .then(dados => dados.json())
+    .then(dados =>{
+      console.log(dados);
+      this.dados = dados;
+    })
+    .catch(_ => {
+      console.log(_);
+    })
+    .finally(()=>{
+      this.is_loading = false;
+      console.log('Requisição Finalizada!!!');
+    })
   }
-
 }
+
